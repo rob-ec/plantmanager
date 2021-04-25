@@ -71,6 +71,7 @@ export function MyPlants() {
 
                     showsVerticalScrollIndicator={false}
                     contentContainerStyle={styles.plantsList}
+                    scrollEnabled={true}
                 />
             </View>
         </View>
@@ -117,6 +118,5 @@ const styles = StyleSheet.create({
         marginVertical: 20,
     },
     plantsList: {
-        flex: 1,
     }
 });
