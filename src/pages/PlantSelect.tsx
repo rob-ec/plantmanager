@@ -19,23 +19,12 @@ import api from '../services/api';
 
 import colors from '../styles/colors';
 import fonts from '../styles/fonts';
+import { useNavigation } from '@react-navigation/native';
+import { PlantProps } from '../libs/storage';
 
 interface EnvironmentProps {
     key: string,
     title: string,
-}
-
-interface PlantProps {
-    id: string,
-    name: string,
-    about: string,
-    water_tips: string,
-    photo: string,
-    environments: [string],
-    frequency: {
-        times: string,
-        repeat_every: string
-    }
 }
 
 export function PlantSelect() {
@@ -48,7 +37,8 @@ export function PlantSelect() {
 
     const [page, setPage] = useState(1);
     const [loadingMore, setLoadingMore] = useState(true);
-    const [loadedOut, setLoadedOut] = useState(false);
+
+    const navigation = useNavigation();
 
     async function fetchPlants() {
         const { data } = await api
@@ -91,6 +81,10 @@ export function PlantSelect() {
         fetchPlants();
     }
 
+    function handlePlantSelect(plant: PlantProps) {
+        navigation.navigate('PlantSave', { plant });
+    }
+
     useEffect(() => {
         async function fetchEnvironment() {
             const { data } = await api
@@ -123,6 +117,7 @@ export function PlantSelect() {
             <View>
                 <FlatList
                     data={environments}
+                    keyExtractor={(item) => String(item.key)}
                     renderItem={({ item }) => (
                         <EnvironmentButton
                             title={item.title}
@@ -138,8 +133,12 @@ export function PlantSelect() {
             <View style={styles.plants}>
                 <FlatList
                     data={filteredPlants}
+                    keyExtractor={(item) => String(item.id)}
                     renderItem={({ item }) => (
-                        <PlantCardPrimary data={item} />
+                        <PlantCardPrimary 
+                            data={item}
+                            onPress={() => handlePlantSelect(item)}
+                        />
                     )}
                     showsVerticalScrollIndicator={false}
                     numColumns={2}
@@ -150,8 +149,8 @@ export function PlantSelect() {
                     )}
                     ListFooterComponent={
                         loadingMore ?
-                        <ActivityIndicator color={colors.green} />
-                        : <></>
+                            <ActivityIndicator color={colors.green} />
+                            : <></>
                     }
                 />
             </View>
